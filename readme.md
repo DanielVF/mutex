@@ -1,4 +1,4 @@
-# Go server for stockfighter style market making
+# Go server for a Stockfighter style stockmarket API
 
 Level based orderbook. Work is in process, no actual server yet.
 
