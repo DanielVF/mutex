@@ -1,5 +1,7 @@
-# Go server for a Stockfighter style stockmarket API
+# Mumbai Textile Exchange (MUTEX)
 
-Level based orderbook. Work is in process, no actual server yet.
+## Go server for a Stockfighter style stockmarket API
 
-If you want to see how things work, take a look at the *_test.go  files.
+The only reason this repo is public is to share some ideas with friends.
+
+It's level based orderbook. Currently supports limit orders. No web interface yet.
