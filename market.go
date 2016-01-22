@@ -5,8 +5,8 @@ import "time"
 type Market struct {
 	// Orders
 	orders   []*Order
-	buyBook  []*Order
-	sellBook []*Order
+	buyBook  OrderBook
+	sellBook OrderBook
 	// last
 	lastId int
 }
@@ -42,14 +42,21 @@ func (m *Market) prepOrder(o *Order) {
 	o.Ts = time.Now()
 	o.OriginalQty = o.Qty
 	o.TotalFilled = 0
+	o.Ok = true
+	o.Open = true
+	m.orders = append(m.orders, o)
 }
 
 func (m *Market) applyOrder(o *Order) {
-
+	if o.Direction == "buy" {
+		m.sellBook.ExecuteOrder(o)
+	} else if o.Direction == "sell" {
+		m.buyBook.ExecuteOrder(o)
+	}
 }
 
 func (m *Market) addToBooks(o *Order) {
-	m.orders = append(m.orders, o)
+
 	if o.OrderType == "immediate-or-cancel" {
 		return
 	}
@@ -57,8 +64,8 @@ func (m *Market) addToBooks(o *Order) {
 		return
 	}
 	if o.Direction == "buy" {
-		m.buyBook = append(m.buyBook, o)
+		m.buyBook.AddOrder(o)
 	} else if o.Direction == "sell" {
-		m.sellBook = append(m.sellBook, o)
+		m.sellBook.AddOrder(o)
 	}
 }
