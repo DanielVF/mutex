@@ -1,6 +1,7 @@
 package mutex
 
 import "time"
+import "errors"
 
 type Market struct {
 	// Orders
@@ -20,8 +21,18 @@ func (m *Market) PlaceOrder(o *Order) {
 	// One day will fire off execution and ticker events
 }
 
-func (m *Market) CancelOrder(id int) {
-	// Remove it, adjust stats
+func (m *Market) CancelOrder(id int) error {
+	o, err := m.Order(id)
+	if err != nil {
+		return err
+	}
+	if o.Direction == "buy" {
+		m.buyBook.RemoveOrder(o)
+	} else if o.Direction == "sell" {
+		m.sellBook.RemoveOrder(o)
+	}
+	o.Open = false
+	return nil
 }
 
 func (m *Market) Quote() {
@@ -32,8 +43,15 @@ func (m *Market) Orderbook() {
 	// Summaries
 }
 
-func (m *Market) OrderStatus() {
-
+func (m *Market) Order(id int) (*Order, error) {
+	if id <= 0 {
+		return nil, errors.New("Order id must be greater than 0")
+	}
+	if id > len(m.orders) {
+		return nil, errors.New("Order does not exist")
+	}
+	order := m.orders[id-1]
+	return order, nil
 }
 
 func (m *Market) prepOrder(o *Order) {
